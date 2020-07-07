@@ -5,7 +5,10 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import util.HibernateUtil;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AuthorDAO {
     @SuppressWarnings("unchecked")
@@ -85,6 +88,26 @@ public class AuthorDAO {
             throw new Error("Error when adding author");
         }
         return updatedAuthor;
+    }
+    public Set<Author> getAuthorsByStringArray(String[] sAuthors){
+        Transaction transaction = null;
+        Set<Author> authors = new HashSet<>();
+        try {
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            transaction = session.beginTransaction();
+            for(String authorId: sAuthors){
+                Author author = session.find(Author.class,Long.parseLong(authorId));
+                authors.add(author);
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            throw new Error("Error when find author");
+        }
+        return authors;
     }
 
     public void deleteAuthor(Author author) {

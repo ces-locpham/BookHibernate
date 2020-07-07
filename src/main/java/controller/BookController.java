@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,9 +24,13 @@ public class BookController extends HttpServlet {
     private AuthorDAO authorDAO = new AuthorDAO();
     private BookDAO bookDAO = new BookDAO();
     private CategoryDAO categoryDAO = new CategoryDAO();
+    private List<Author> listOfAuthors = new ArrayList<>();
+    private List<Category> listOfCategories   = new ArrayList<>();
 
     @Override
     public void init() throws ServletException {
+        listOfCategories =  categoryDAO.getAllCategories();
+        listOfAuthors = authorDAO.getAllAuthors();
     }
 
     @Override
@@ -63,24 +68,24 @@ public class BookController extends HttpServlet {
         String name = req.getParameter("name");
         String[] authorIds = req.getParameterValues("authors");
         String categoryId = req.getParameter("category");
-        Set<Author> authors = new HashSet<Author>();
         Book updatedBook = bookDAO.getBook(Long.valueOf(id));
         Category category = categoryDAO.getCategory(Long.valueOf(categoryId));
         updatedBook.setName(name);
         updatedBook.setCategory(category);
         bookDAO.updateBook(updatedBook);
         // adding book in author
-        for (String authorId:authorIds) {
-            Author author = authorDAO.getAuthor(Long.valueOf(authorId));
-            author.addBook(updatedBook);
-            authorDAO.updateAuthor(author);
-            authors.add(author);
-        }
+        Set<Author> selectedAuthors = authorDAO.getAuthorsByStringArray(authorIds);
+        Set<Author> authors = new HashSet<>();
+        authors.addAll(selectedAuthors);
+        authors.addAll(updatedBook.getAuthors());
         Set<Author> removedBookAuthor =  updatedBook.getAuthors();
-        removedBookAuthor.removeAll(authors);
-        // remove existAuthor
-        for(Author author: removedBookAuthor){
-            author.removeBook(updatedBook);
+        removedBookAuthor.removeAll(selectedAuthors);
+        for (Author author:authors) {
+            if (removedBookAuthor.contains(author)) {
+                author.removeBook(updatedBook);
+            } else {
+                author.addBook(updatedBook);
+            }
             authorDAO.updateAuthor(author);
         }
         resp.sendRedirect("/book");
@@ -88,12 +93,9 @@ public class BookController extends HttpServlet {
 
     private void showEdit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
-
-        List<Category> categories = categoryDAO.getAllCategories();
-        List<Author> authors = authorDAO.getAllAuthors();
         Book book = bookDAO.getBook(Long.valueOf(id));
-        req.setAttribute("authors", authors);
-        req.setAttribute("categories", categories);
+        req.setAttribute("authors", this.listOfAuthors);
+        req.setAttribute("categories", this.listOfCategories);
         req.setAttribute("book", book);
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/FormBook.jsp");
         requestDispatcher.forward(req, resp);
@@ -103,7 +105,6 @@ public class BookController extends HttpServlet {
         String name = req.getParameter("name");
         String[] authorsId = req.getParameterValues("authors");
         String categoryId = req.getParameter("category");
-        Set<Author> authors = new HashSet<Author>();
         Category category = categoryDAO.getCategory(Long.valueOf(categoryId));
         Book newBook = new Book();
         newBook.setName(name);
@@ -118,10 +119,8 @@ public class BookController extends HttpServlet {
     }
 
     private void showAdd(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Category> categories = categoryDAO.getAllCategories();
-        List<Author> authors = authorDAO.getAllAuthors();
-        req.setAttribute("authors", authors);
-        req.setAttribute("categories", categories);
+        req.setAttribute("authors", this.listOfAuthors);
+        req.setAttribute("categories", this.listOfCategories);
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/FormBook.jsp");
         requestDispatcher.forward(req, resp);
     }

@@ -75,6 +75,15 @@ public class Author {
     }
 
     @Override
+    public String toString() {
+        return "Author{" +
+                "id=" + this.id +
+                ", name='" + this.name + '\'' +
+                ", books=" + this.books +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return (this.getId() + this.getName()).hashCode();
     }
