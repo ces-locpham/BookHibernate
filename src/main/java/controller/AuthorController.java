@@ -14,16 +14,25 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = {"/author/showAdd", "/author/add"})
 public class AuthorController extends HttpServlet {
+
     private AuthorDAO authorDAO = new AuthorDAO();
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        dialAuthor(req, resp);
+    private void addAuthor(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException {
+
+        String name = req.getParameter("name");
+        Author newAuthor = new Author();
+        newAuthor.setName(name);
+        authorDAO.addAuthor(newAuthor);
+        resp.sendRedirect("/book");
     }
 
-    private void dialAuthor(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    private void dialAuthor(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException, ServletException {
+
         String action = req.getServletPath();
         switch (action) {
+
             case "/author/showAdd":
                 showAdd(req, resp);
                 break;
@@ -33,21 +42,27 @@ public class AuthorController extends HttpServlet {
         }
     }
 
-    private void showAdd(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/FormAuthor.jsp");
-        requestDispatcher.forward(req, resp);
-    }
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
 
-    private void addAuthor(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String name = req.getParameter("name");
-        Author newAuthor = new Author();
-        newAuthor.setName(name);
-        authorDAO.addAuthor(newAuthor);
-        resp.sendRedirect("/book");
+        dialAuthor(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
         dialAuthor(req, resp);
     }
+
+    private void showAdd(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        RequestDispatcher requestDispatcher =
+                req.getRequestDispatcher("/WEB-INF/FormAuthor.jsp");
+        requestDispatcher.forward(req, resp);
+    }
+
+
 }
