@@ -13,11 +13,11 @@
         &nbsp; Management
     </h1>
     <c:if test="${book==null}">
-        <form action="/book/add" method="post">
-    </c:if>
-    <c:if test="${book!=null}">
+    <form action="/book/add" method="post">
+        </c:if>
+        <c:if test="${book!=null}">
         <form action="/book/edit?id=<c:out value='${book.id}' />" method="post">
-    </c:if>
+            </c:if>
 
             <table cellpadding="2" border="1">
                 <tr>
@@ -34,7 +34,7 @@
                                         <option value="${author.id}" selected>${author.name}</option>
                                     </c:when>
                                     <c:otherwise>
-                                        <option value="${author.id}" >${author.name}</option>
+                                        <option value="${author.id}">${author.name}</option>
                                     </c:otherwise>
                                 </c:choose>
                             </c:forEach>

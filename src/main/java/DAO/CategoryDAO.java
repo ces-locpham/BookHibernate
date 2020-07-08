@@ -46,7 +46,7 @@ public class CategoryDAO {
             e.printStackTrace();
         }
         if (category == null) {
-            throw new Error("Server cannot find this "+Category.class+" id");
+            throw new Error("Server cannot find this " + Category.class + " id");
 
         }
         return category;
@@ -58,15 +58,16 @@ public class CategoryDAO {
         try {
             Session session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
-             session.save(category);
+            session.save(category);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
-            throw new Error("Server cannot add "+Category.class);
-        } }
+            throw new Error("Server cannot add " + Category.class);
+        }
+    }
 
     public Category updateCategory(Category category) {
         Transaction transaction = null;

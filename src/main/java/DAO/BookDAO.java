@@ -87,7 +87,7 @@ public class BookDAO {
             e.printStackTrace();
             throw new Error("Error when update book");
         }
-        return  updatedBook;
+        return updatedBook;
     }
 
     public void deleteBook(Book book) {

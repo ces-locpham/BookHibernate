@@ -1,6 +1,5 @@
 package model;
 
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -46,7 +45,6 @@ public class Book {
     public void setId(long id) {
         this.id = id;
     }
-
 
     public String getName() {
         return name;

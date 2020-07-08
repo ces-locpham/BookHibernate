@@ -18,19 +18,20 @@ public class Author {
                     CascadeType.PERSIST,
                     CascadeType.DETACH,
                     CascadeType.REFRESH,
-                    CascadeType.REMOVE,
+                    CascadeType.MERGE
             },
-            fetch = FetchType.EAGER
+            fetch = FetchType.LAZY
     )
     @JoinTable(
-            name="books_authors",
-            joinColumns = @JoinColumn(name="author_id"),
+            name = "books_authors",
+            joinColumns = @JoinColumn(name = "author_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id")
     )
     private Set<Book> books = new HashSet<Book>();
 
     public Author() {
     }
+
     public Author(String name) {
         this.name = name;
     }
@@ -58,19 +59,26 @@ public class Author {
     public void setName(String name) {
         this.name = name;
     }
+
     public void addBook(Book book) {
         books.add(book);
+        book.getAuthors().add(this);
     }
+
     public void removeBook(Book book) {
         books.remove(book);
+        book.getAuthors().remove(this);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj){
+        if (this == obj) {
             return true;
         }
-        Author author =(Author) obj;
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Author author = (Author) obj;
         return this.id == author.getId();
     }
 

@@ -73,11 +73,11 @@ public class BookController extends HttpServlet {
         updatedBook.setName(name);
         updatedBook.setCategory(category);
         bookDAO.updateBook(updatedBook);
-        // adding book in author
+        Set<Author> oldAuthors = updatedBook.getAuthors();
         Set<Author> selectedAuthors = authorDAO.getAuthorsByStringArray(authorIds);
         Set<Author> authors = new HashSet<>();
         authors.addAll(selectedAuthors);
-        authors.addAll(updatedBook.getAuthors());
+        authors.addAll(oldAuthors);
         Set<Author> removedBookAuthor =  updatedBook.getAuthors();
         removedBookAuthor.removeAll(selectedAuthors);
         for (Author author:authors) {

@@ -5,14 +5,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="category")
+@Table(name = "category")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
     private long id;
     private String name;
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private Set<Book> books = new HashSet<Book>();
 
     public Category() {
